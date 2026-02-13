@@ -93,9 +93,9 @@ class ToDoTableViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         
         // Title with completion strike-through
-        let titleAttributes: [NSAttributedString.Key: Any] = todo.isComplete ? 
-            [.strikethroughStyle: NSUnderlineStyle.single.rawValue, .foregroundColor: UIColor.gray] : 
-            [:]
+        let titleAttributes: [NSAttributedString.Key: Any] = todo.isComplete ?
+        [.strikethroughStyle: NSUnderlineStyle.single.rawValue, .foregroundColor: UIColor.gray] :
+        [:]
         content.attributedText = NSAttributedString(string: todo.title, attributes: titleAttributes)
         
         // Secondary text: category and due date
@@ -333,7 +333,6 @@ class ToDoTableViewController: UITableViewController {
         }
     }
 }
-
 // MARK: - Search Results Updating
 extension ToDoTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {

@@ -65,15 +65,25 @@ class ToDoDetailTableViewController: UITableViewController {
         }
         
         updateSaveButtonState()
+        
+        notesTextView.isEditable = true
+            notesTextView.isSelectable = true
+            notesTextView.isUserInteractionEnabled = true
+            notesTextView.isScrollEnabled = true
+            
+            // Add border for visual feedback (optional)
+            notesTextView.layer.borderColor = UIColor.systemGray5.cgColor
+            notesTextView.layer.borderWidth = 1
+            notesTextView.layer.cornerRadius = 8
     }
     
     // MARK: - Table View Delegate
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Date picker row
         if indexPath.section == 1 && indexPath.row == 1 {
-            return isPickerHidden ? 0 : dueDatePicker.frame.height
-        }
-        return UITableView.automaticDimension
+                return isPickerHidden ? 0 : 320
+            }
+            return UITableView.automaticDimension
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -86,6 +96,14 @@ class ToDoDetailTableViewController: UITableViewController {
             tableView.beginUpdates()
             tableView.endUpdates()
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        // Don't highlight the notes row (Section 2, Row 1)
+        if indexPath.section == 2 && indexPath.row == 1 {
+            return false
+        }
+        return true
     }
     
     // MARK: - Actions
