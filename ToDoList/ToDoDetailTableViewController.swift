@@ -33,9 +33,18 @@ class ToDoDetailTableViewController: UITableViewController {
         dueDatePicker.date = Date()
         
         // Setup notes text view
-        notesTextView.layer.borderColor = UIColor.systemGray5.cgColor
-        notesTextView.layer.borderWidth = 1
-        notesTextView.layer.cornerRadius = 8
+        notesTextView.delegate = self
+            notesTextView.isEditable = true
+            notesTextView.isSelectable = true
+            notesTextView.isUserInteractionEnabled = true
+            notesTextView.isScrollEnabled = true
+            notesTextView.font = UIFont.systemFont(ofSize: 16)
+            notesTextView.textContainerInset = UIEdgeInsets(top: 8, left: 4, bottom: 8, right: 4)
+            
+            // Add border
+            notesTextView.layer.borderColor = UIColor.systemGray5.cgColor
+            notesTextView.layer.borderWidth = 1
+            notesTextView.layer.cornerRadius = 8
         
         // Load existing todo if editing
         if let todo = todo {
@@ -191,5 +200,15 @@ class ToDoDetailTableViewController: UITableViewController {
                 hasReminder: hasReminder
             )
         }
+    }
+}
+// MARK: - UITextView Delegate
+extension ToDoDetailTableViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        print("✅ Text view is now being edited")
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        print("✅ Text changed: \(textView.text ?? "")")
     }
 }

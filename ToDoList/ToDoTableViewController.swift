@@ -15,6 +15,7 @@ class ToDoTableViewController: UITableViewController {
     var filteredTodos: [ToDoItem] = []
     var isFiltering: Bool = false
     var selectedCategory: ToDoItem.Category?
+    var editingIndexPath: IndexPath?
     
     // Search controller
     let searchController = UISearchController(searchResultsController: nil)
@@ -130,6 +131,12 @@ class ToDoTableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let todo = isFiltering ? filteredTodos[indexPath.row] : todos[indexPath.row]
+        
+        print("🔵 Tapped todo: \(todo.title)")
+        
+        // Store which row we're editing
+        editingIndexPath = indexPath
+        
         performSegue(withIdentifier: "ShowDetail", sender: todo)
     }
     
@@ -290,45 +297,57 @@ class ToDoTableViewController: UITableViewController {
     // MARK: - Navigation
     @IBAction func unwindToToDoList(_ unwindSegue: UIStoryboardSegue) {
         guard let sourceVC = unwindSegue.source as? ToDoDetailTableViewController,
-              let todo = sourceVC.todo else { return }
-        
-        if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            // Update existing item
-            todos[selectedIndexPath.row] = todo
+                  let todo = sourceVC.todo else { return }
             
-            // Update filtered array if filtering
-            if isFiltering {
-                if let filteredIndex = filteredTodos.firstIndex(where: { $0.id == todo.id }) {
-                    filteredTodos[filteredIndex] = todo
+            if let editingIndexPath = editingIndexPath {
+                // EDITING existing task
+                print("🟡 Updating task at row \(editingIndexPath.row)")
+                
+                todos[editingIndexPath.row] = todo
+                
+                // Update filtered array if filtering
+                if isFiltering {
+                    if let filteredIndex = filteredTodos.firstIndex(where: { $0.id == todo.id }) {
+                        filteredTodos[filteredIndex] = todo
+                    }
                 }
+                
+                tableView.reloadRows(at: [editingIndexPath], with: .automatic)
+                
+                // Clear the editing index
+                self.editingIndexPath = nil
+            } else {
+                // ADDING new task
+                print("🟢 Adding new task")
+                
+                todos.append(todo)
+                
+                let newIndexPath = IndexPath(row: todos.count - 1, section: 0)
+                tableView.insertRows(at: [newIndexPath], with: .automatic)
             }
             
-            tableView.reloadRows(at: [selectedIndexPath], with: .automatic)
-        } else {
-            // Add new item
-            todos.append(todo)
+            // Schedule/cancel notification
+            if todo.hasReminder && todo.dueDate != nil {
+                scheduleNotification(for: todo)
+            } else {
+                cancelNotification(for: todo)
+            }
             
-            let newIndexPath = IndexPath(row: todos.count - 1, section: 0)
-            tableView.insertRows(at: [newIndexPath], with: .automatic)
+            saveToDos()
         }
-        
-        // Schedule notification if needed
-        if todo.hasReminder && todo.dueDate != nil {
-            scheduleNotification(for: todo)
-        } else {
-            cancelNotification(for: todo)
-        }
-        
-        saveToDos()
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("🟢 Prepare for segue: \(segue.identifier ?? "no id")")
+        
         if segue.identifier == "ShowDetail" {
             let navController = segue.destination as! UINavigationController
             let detailVC = navController.topViewController as! ToDoDetailTableViewController
             
             if let todo = sender as? ToDoItem {
+                print("🟢 Passing todo to detail: \(todo.title)")
                 detailVC.todo = todo
+            } else {
+                print("🔴 ERROR: Sender is not a ToDoItem!")
             }
         }
     }
