@@ -61,23 +61,6 @@ open ToDoList.xcodeproj
 
 Press ⌘R to build and run
 
-## 🏗️ Project Structure
-
-```
-ToDoList/
-├── Models/
-│   └── ToDoItem.swift              # Task model with categories, dates, reminders
-├── Controllers/
-│   ├── ToDoTableViewController.swift        # Main list view
-│   └── ToDoDetailTableViewController.swift  # Add/edit form
-├── Views/
-│   └── Main.storyboard
-└── Supporting Files/
-    ├── AppDelegate.swift
-    ├── SceneDelegate.swift
-    └── Assets.xcassets/
-```
-
 ## 🎯 Feature Details
 
 ### Categories
